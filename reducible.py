@@ -64,7 +64,8 @@ def step_size(s):
     pre: s is a lowercase string.
     post: Returns the calculated step size as an integer based on the provided string.
     """
-    return STEP_SIZE_CONSTANT - (hash_word(s, len(s)) % STEP_SIZE_CONSTANT)
+    sum_ascii = sum(ord(char) for char in s)
+    return STEP_SIZE_CONSTANT - (sum_ascii % STEP_SIZE_CONSTANT)
 
 
 # Modify this function. You may delete this comment when you are done.
@@ -77,13 +78,11 @@ def insert_word(s, hash_table):
     post: Inserts s into hash_table at the correct index; resolves any collisions
           by double hashing.
     """
-    idx = hash_word(s, len(hash_table))
-
+    index = hash_word(s, len(hash_table))
     step = step_size(s)
-    while hash_table[idx] != "":
-        idx = (idx + step) % len(hash_table)
-
-    hash_table[idx] = s
+    while hash_table[index] != "":
+        index = (index + step) % len(hash_table)
+    hash_table[index] = s
 
 # Modify this function. You may delete this comment when you are done.
 def find_word(s, hash_table):
@@ -95,14 +94,12 @@ def find_word(s, hash_table):
     pre: s is a string, and hash_table is a list representing the hash table.
     post: Returns True if s is found in hash_table, otherwise returns False.
     """
-    idx = hash_word(s, len(hash_table))
-
+    index = hash_word(s, len(hash_table))
     step = step_size(s)
-    while hash_table[idx] != "":
-        if hash_table[idx] == s:
+    while hash_table[index] != "":
+        if hash_table[index] == s:
             return True
-        idx = (idx + step) % len(hash_table)
-
+        index = (index + step) % len(hash_table)
     return False
 
 
@@ -117,18 +114,16 @@ def is_reducible(s, hash_table, hash_memo):
     post: Returns True if s is reducible (also updates hash_memo by
           inserting s if reducible), otherwise returns False.
     """
-    if s == "":
+    if s in ["a", "i", "o"]:
         return True
-
     if find_word(s, hash_memo):
         return True
 
     for i in range(len(s)):
         sub_word = s[:i] + s[i+1:]
-        if is_reducible(sub_word, hash_table, hash_memo):
+        if find_word(sub_word, hash_table) and is_reducible(sub_word, hash_table, hash_memo):
             insert_word(s, hash_memo)
             return True
-
     return False
 
 
@@ -140,8 +135,8 @@ def get_longest_words(string_list):
     pre: string_list is a list of lowercase strings.
     post: Returns a list of words in string_list that have the maximum length.
     """
-    max_len = max(len(word) for word in string_list)
-    return [word for word in string_list if len(word) == max_len]
+    max_length = max(len(word) for word in string_list)
+    return [word for word in string_list if len(word) == max_length]
 
 # Modify this function. You may delete this comment when you are done.
 def main():
