@@ -64,8 +64,8 @@ def step_size(s):
     pre: s is a lowercase string.
     post: Returns the calculated step size as an integer based on the provided string.
     """
-    sum_ascii = sum(ord(char) for char in s)
-    return STEP_SIZE_CONSTANT - (sum_ascii % STEP_SIZE_CONSTANT)
+    vowels = 'aeiou'
+    return sum(1 for char in s if char in vowels)
 
 
 # Modify this function. You may delete this comment when you are done.
@@ -78,10 +78,11 @@ def insert_word(s, hash_table):
     post: Inserts s into hash_table at the correct index; resolves any collisions
           by double hashing.
     """
-    index = hash_word(s, len(hash_table))
-    step = step_size(s)
+    index = sum(ord(char) for char in s) % len(hash_table)
+    
     while hash_table[index] != "":
-        index = (index + step) % len(hash_table)
+        index = (index + 1) % len(hash_table)
+    
     hash_table[index] = s
 
 # Modify this function. You may delete this comment when you are done.
@@ -135,6 +136,9 @@ def get_longest_words(string_list):
     pre: string_list is a list of lowercase strings.
     post: Returns a list of words in string_list that have the maximum length.
     """
+    if not string_list:
+        return []
+    
     max_length = max(len(word) for word in string_list)
     return [word for word in string_list if len(word) == max_length]
 
