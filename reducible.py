@@ -87,7 +87,7 @@ def insert_word(s, hash_table):
         index = (index + step) % len(hash_table)
         if index == initial_index:
             return
-    
+
     hash_table[index] = s
 
 # Modify this function. You may delete this comment when you are done.
@@ -129,12 +129,16 @@ def is_reducible(s, hash_table, hash_memo):
     if find_word(s, hash_memo):
         return True
 
+    reducible = False
     for i in range(len(s)):
         sub_word = s[:i] + s[i+1:]
         if find_word(sub_word, hash_table) and is_reducible(sub_word, hash_table, hash_memo):
-            insert_word(s, hash_memo)
-            return True
-    return False
+            reducible = True
+            break
+
+    if reducible:
+        insert_word(s, hash_memo)
+    return reducible
 
 
 # Modify this function. You may delete this comment when you are done.
