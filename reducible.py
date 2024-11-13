@@ -1,3 +1,4 @@
+
 """
 Student information for this assignment:
 
@@ -64,9 +65,8 @@ def step_size(s):
     pre: s is a lowercase string.
     post: Returns the calculated step size as an integer based on the provided string.
     """
-    vowels = 'aeiou'
-    return sum(1 for char in s if char in vowels)
-
+    hash_value = hash_word(s, STEP_SIZE_CONSTANT)
+    return STEP_SIZE_CONSTANT - (hash_value % STEP_SIZE_CONSTANT)
 
 # Modify this function. You may delete this comment when you are done.
 def insert_word(s, hash_table):
@@ -78,10 +78,15 @@ def insert_word(s, hash_table):
     post: Inserts s into hash_table at the correct index; resolves any collisions
           by double hashing.
     """
-    index = sum(ord(char) for char in s) % len(hash_table)
-    
+    index = hash_word(s, len(hash_table))
+    step = step_size(s)
+    initial_index = index
     while hash_table[index] != "":
-        index = (index + 1) % len(hash_table)
+        if hash_table[index] == s:
+            return
+        index = (index + step) % len(hash_table)
+        if index == initial_index:
+            return
     
     hash_table[index] = s
 
@@ -97,10 +102,14 @@ def find_word(s, hash_table):
     """
     index = hash_word(s, len(hash_table))
     step = step_size(s)
+
+    initial_index = index
     while hash_table[index] != "":
         if hash_table[index] == s:
             return True
         index = (index + step) % len(hash_table)
+        if index == initial_index:
+            break
     return False
 
 
@@ -138,9 +147,9 @@ def get_longest_words(string_list):
     """
     if not string_list:
         return []
-    
     max_length = max(len(word) for word in string_list)
     return [word for word in string_list if len(word) == max_length]
+
 
 # Modify this function. You may delete this comment when you are done.
 def main():
